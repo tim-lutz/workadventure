@@ -62,9 +62,10 @@ export class MapController extends BaseController {
                         roomSlug: "", // Deprecated
                         group: null,
                         tags: [],
+                        groupId: null,
                         textures: [],
                         contactPage: undefined,
-                    } as MapDetailsData)
+                    })
                 );
 
                 return;
