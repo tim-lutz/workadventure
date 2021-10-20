@@ -97,6 +97,9 @@ import { analyticsClient } from "../../Administration/AnalyticsClient";
 import { get } from "svelte/store";
 import type { RadialMenuItem } from "../Components/RadialMenu";
 import { contactPageStore } from "../../Stores/MenuStore";
+import xml from "@xmpp/xml";
+import {XmppClient} from "../../Xmpp/XmppClient";
+
 
 export interface GameSceneInitInterface {
     initPosition: PointInterface | null;
@@ -209,6 +212,7 @@ export class GameScene extends DirtyScene {
     private sharedVariablesManager!: SharedVariablesManager;
     private objectsByType = new Map<string, ITiledMapObject[]>();
     private embeddedWebsiteManager!: EmbeddedWebsiteManager;
+    private xmppClient!: XmppClient;
 
     constructor(private room: Room, MapUrlFile: string, customKey?: string | undefined) {
         super({
@@ -765,6 +769,9 @@ export class GameScene extends DirtyScene {
 
                 //init user position and play trigger to check layers properties
                 this.gameMap.setPosition(this.CurrentPlayer.x, this.CurrentPlayer.y);
+
+                // Connect to XMPP
+                this.xmppClient = new XmppClient(this.connection);
             });
     }
 
@@ -1294,6 +1301,7 @@ ${escapedMessage}
         this.stopJitsi();
         audioManagerFileStore.unloadAudio();
         // We are completely destroying the current scene to avoid using a half-backed instance when coming back to the same map.
+        this.xmppClient?.close();
         this.connection?.closeConnection();
         this.simplePeer?.closeAllConnections();
         this.simplePeer?.unregister();

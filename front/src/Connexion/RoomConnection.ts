@@ -33,7 +33,7 @@ import {
     SendUserMessage,
     BanUserMessage,
     VariableMessage,
-    ErrorMessage,
+    ErrorMessage, XmppMessage, XmppSettingsMessage,
 } from "../Messages/generated/messages_pb";
 
 import type { UserSimplePeerInterface } from "../WebRtc/SimplePeer";
@@ -58,6 +58,8 @@ import { worldFullMessageStream } from "./WorldFullMessageStream";
 import { connectionManager } from "./ConnectionManager";
 import { emoteEventStream } from "./EmoteEventStream";
 import { warningContainerStore } from "../Stores/MenuStore";
+import type xml from "@xmpp/xml";
+const parse = require("@xmpp/xml/lib/parse");
 
 const manualPingDelay = 20000;
 
@@ -177,6 +179,9 @@ export class RoomConnection implements RoomConnection {
                     } else if (subMessage.hasVariablemessage()) {
                         event = EventMessage.SET_VARIABLE;
                         payload = subMessage.getVariablemessage();
+                    } else if (subMessage.hasXmppmessage()) {
+                        event = EventMessage.XMPP_MESSAGE;
+                        payload = subMessage.getXmppmessage();
                     } else {
                         throw new Error("Unexpected batch message type");
                     }
@@ -253,6 +258,9 @@ export class RoomConnection implements RoomConnection {
                 adminMessagesService.onSendusermessage(message.getBanusermessage() as BanUserMessage);
             } else if (message.hasWorldfullwarningmessage()) {
                 warningContainerStore.activateWarningContainer();
+            } else if (message.hasXmppsettingsmessage()) {
+                this.lastXmppSettings = message.getXmppsettingsmessage();
+                this.dispatch(EventMessage.XMPP_SETTINGS, message.getXmppsettingsmessage());
             } else if (message.hasRefreshroommessage()) {
                 //todo: implement a way to notify the user the room was refreshed.
             } else {
@@ -689,6 +697,25 @@ export class RoomConnection implements RoomConnection {
         });
     }
 
+    public onXmppMessage(callback: (message: xml.Element) => void): void {
+        this.onMessage(EventMessage.XMPP_MESSAGE, (message: XmppMessage) => {
+            const xml = parse(message);
+            callback(xml);
+        });
+    }
+
+    private lastXmppSettings: XmppSettingsMessage|undefined;
+
+    public onXmppSettings(callback: (jid: string, conferenceDomain: string, mucRoomUrls: string[]) => void): void {
+        this.onMessage(EventMessage.XMPP_SETTINGS, (message: XmppSettingsMessage) => {
+            callback(message.getJid(), message.getConferencedomain(), message.getRoomurlsList());
+        });
+        // In case we register AFTER the settings have been saved, let's call the callback anyway.
+        if (this.lastXmppSettings) {
+            callback(this.lastXmppSettings.getJid(), this.lastXmppSettings.getConferencedomain(), this.lastXmppSettings.getRoomurlsList());
+        }
+    }
+
     public hasTag(tag: string): boolean {
         return this.tags.includes(tag);
     }
@@ -709,5 +736,15 @@ export class RoomConnection implements RoomConnection {
 
     public getAllTags(): string[] {
         return this.tags;
+    }
+
+    public emitXmlMessage(xml: xml.Element): void {
+        const xmppMessage = new XmppMessage();
+        xmppMessage.setStanza(xml.toString());
+
+        const clientToServerMessage = new ClientToServerMessage();
+        clientToServerMessage.setXmppmessage(xmppMessage);
+
+        this.socket.send(clientToServerMessage.serializeBinary().buffer);
     }
 }

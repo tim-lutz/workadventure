@@ -17,7 +17,7 @@ import {
     ServerToClientMessage,
     CompanionMessage,
     EmotePromptMessage,
-    VariableMessage,
+    VariableMessage, XmppMessage,
 } from "../Messages/generated/messages_pb";
 import { UserMovesMessage } from "../Messages/generated/messages_pb";
 import { TemplatedApp } from "uWebSockets.js";
@@ -389,6 +389,11 @@ export class IoSocketController {
                     socketManager.handleEmotePromptMessage(
                         client,
                         message.getEmotepromptmessage() as EmotePromptMessage
+                    );
+                } else if (message.hasXmppmessage()) {
+                    socketManager.handleXmppMessage(
+                        client,
+                        message.getXmppmessage() as XmppMessage
                     );
                 }
 

@@ -42,6 +42,7 @@
     import AudioManager from "./AudioManager/AudioManager.svelte"
     import { showReportScreenStore, userReportEmpty } from "../Stores/ShowReportScreenStore";
     import ReportMenu from "./ReportMenu/ReportMenu.svelte";
+    import {mucRoomsVisibilityStore} from "../Stores/MucRoomsStore";
 
     export let game: Game;
 

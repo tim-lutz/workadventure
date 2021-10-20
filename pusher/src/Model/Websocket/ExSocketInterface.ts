@@ -12,6 +12,8 @@ import { WebSocket } from "uWebSockets.js";
 import { ClientDuplexStream } from "grpc";
 import { Zone } from "_Model/Zone";
 import { CharacterTexture } from "../../Services/AdminApi/CharacterTexture";
+import {PusherRoom} from "_Model/PusherRoom";
+import {XmppClient} from "../../Services/XmppClient";
 
 export type BackConnection = ClientDuplexStream<PusherToBackMessage, ServerToClientMessage>;
 
@@ -45,4 +47,6 @@ export interface ExSocketInterface extends WebSocket, Identificable {
     textures: CharacterTexture[];
     backConnection: BackConnection;
     listenedZones: Set<Zone>;
+    pusherRoom: PusherRoom|undefined;
+    xmppClient: XmppClient|undefined;
 }
