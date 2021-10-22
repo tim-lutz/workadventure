@@ -38,7 +38,7 @@ import {
 
 import type { UserSimplePeerInterface } from "../WebRtc/SimplePeer";
 import Direction = PositionMessage.Direction;
-import { ProtobufClientUtils } from "../Network/ProtobufClientUtils";
+import {MucRoomDefinitionInterface, ProtobufClientUtils} from "../Network/ProtobufClientUtils";
 import {
     EventMessage,
     GroupCreatedUpdatedMessageInterface,
@@ -706,13 +706,13 @@ export class RoomConnection implements RoomConnection {
 
     private lastXmppSettings: XmppSettingsMessage|undefined;
 
-    public onXmppSettings(callback: (jid: string, conferenceDomain: string, mucRoomUrls: string[]) => void): void {
+    public onXmppSettings(callback: (jid: string, conferenceDomain: string, mucRoomDefinitions: MucRoomDefinitionInterface[]) => void): void {
         this.onMessage(EventMessage.XMPP_SETTINGS, (message: XmppSettingsMessage) => {
-            callback(message.getJid(), message.getConferencedomain(), message.getRoomurlsList());
+            callback(message.getJid(), message.getConferencedomain(), message.getRoomsList().map((room) => ProtobufClientUtils.toMucRoomDefinition(room)));
         });
         // In case we register AFTER the settings have been saved, let's call the callback anyway.
         if (this.lastXmppSettings) {
-            callback(this.lastXmppSettings.getJid(), this.lastXmppSettings.getConferencedomain(), this.lastXmppSettings.getRoomurlsList());
+            callback(this.lastXmppSettings.getJid(), this.lastXmppSettings.getConferencedomain(), this.lastXmppSettings.getRoomsList().map((room) => ProtobufClientUtils.toMucRoomDefinition(room)));
         }
     }
 

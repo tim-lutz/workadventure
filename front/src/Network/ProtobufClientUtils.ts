@@ -1,6 +1,11 @@
-import { PositionMessage } from "../Messages/generated/messages_pb";
+import {MucRoomDefinitionMessage, PositionMessage} from "../Messages/generated/messages_pb";
 import Direction = PositionMessage.Direction;
 import type { PointInterface } from "../Connexion/ConnexionModels";
+
+export interface MucRoomDefinitionInterface {
+    name: string;
+    url: string;
+}
 
 export class ProtobufClientUtils {
     public static toPointInterface(position: PositionMessage): PointInterface {
@@ -30,4 +35,9 @@ export class ProtobufClientUtils {
             moving: position.getMoving(),
         };
     }
+
+    public static toMucRoomDefinition(mucRoomDefinitionMessage: MucRoomDefinitionMessage): MucRoomDefinitionInterface {
+        return mucRoomDefinitionMessage.toObject();
+    }
+
 }

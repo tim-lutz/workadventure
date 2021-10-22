@@ -43,6 +43,7 @@
     import { showReportScreenStore, userReportEmpty } from "../Stores/ShowReportScreenStore";
     import ReportMenu from "./ReportMenu/ReportMenu.svelte";
     import {mucRoomsVisibilityStore} from "../Stores/MucRoomsStore";
+    import MucRooms from "./Chat/MucRooms.svelte";
 
     export let game: Game;
 
@@ -141,6 +142,9 @@
     {/if}
     {#if $chatVisibilityStore}
         <Chat></Chat>
+    {/if}
+    {#if $mucRoomsVisibilityStore}
+        <MucRooms></MucRooms>
     {/if}
     {#if $warningContainerStore}
         <WarningContainer></WarningContainer>
