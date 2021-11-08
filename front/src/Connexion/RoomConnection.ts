@@ -33,7 +33,7 @@ import {
     SendUserMessage,
     BanUserMessage,
     VariableMessage,
-    ErrorMessage, XmppMessage, XmppSettingsMessage,
+    ErrorMessage, XmppMessage, XmppSettingsMessage, XmppConnectionStatusChangeMessage,
 } from "../Messages/generated/messages_pb";
 
 import type { UserSimplePeerInterface } from "../WebRtc/SimplePeer";
@@ -261,6 +261,8 @@ export class RoomConnection implements RoomConnection {
             } else if (message.hasXmppsettingsmessage()) {
                 this.lastXmppSettings = message.getXmppsettingsmessage();
                 this.dispatch(EventMessage.XMPP_SETTINGS, message.getXmppsettingsmessage());
+            } else if (message.hasXmppconnectionstatuschangemessage()) {
+                this.dispatch(EventMessage.XMPP_CONNECTION_STATUS_CHANGED, message.getXmppconnectionstatuschangemessage());
             } else if (message.hasRefreshroommessage()) {
                 //todo: implement a way to notify the user the room was refreshed.
             } else {
@@ -708,12 +710,20 @@ export class RoomConnection implements RoomConnection {
 
     public onXmppSettings(callback: (jid: string, conferenceDomain: string, mucRoomDefinitions: MucRoomDefinitionInterface[]) => void): void {
         this.onMessage(EventMessage.XMPP_SETTINGS, (message: XmppSettingsMessage) => {
+            console.log("XMPP_SETTINGS RECEIVED");
             callback(message.getJid(), message.getConferencedomain(), message.getRoomsList().map((room) => ProtobufClientUtils.toMucRoomDefinition(room)));
         });
         // In case we register AFTER the settings have been saved, let's call the callback anyway.
         if (this.lastXmppSettings) {
+            console.log("XMPP_SETTINGS CALLBACK REGISTERED AFTER SETTINGS RECEIVED");
             callback(this.lastXmppSettings.getJid(), this.lastXmppSettings.getConferencedomain(), this.lastXmppSettings.getRoomsList().map((room) => ProtobufClientUtils.toMucRoomDefinition(room)));
         }
+    }
+
+    public onXmppConnectionStatusChanged(callback: (status: XmppConnectionStatusChangeMessage.Status) => void): void {
+        this.onMessage(EventMessage.XMPP_CONNECTION_STATUS_CHANGED, (message: XmppConnectionStatusChangeMessage) => {
+            callback(message.getStatus());
+        });
     }
 
     public hasTag(tag: string): boolean {

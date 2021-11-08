@@ -34,6 +34,7 @@ export enum EventMessage {
     SET_VARIABLE = "set-variable",
     XMPP_MESSAGE = "xmpp-message",
     XMPP_SETTINGS = "xmpp-settings",
+    XMPP_CONNECTION_STATUS_CHANGED = "xmpp-connection-status-changed",
 }
 
 export interface PointInterface {
