@@ -1156,7 +1156,6 @@ ${escapedMessage}
 
             return {
                 id: coWebsite.iframe.id,
-                position: coWebsite.position,
             };
         });
 
@@ -1166,7 +1165,6 @@ ${escapedMessage}
             return coWebsites.map((coWebsite: CoWebsite) => {
                 return {
                     id: coWebsite.iframe.id,
-                    position: coWebsite.position,
                 };
             });
         });
