@@ -77,6 +77,7 @@ import { emoteStore, emoteMenuStore } from "../../Stores/EmoteStore";
 import { userIsAdminStore } from "../../Stores/GameStore";
 import { contactPageStore } from "../../Stores/MenuStore";
 import { audioManagerFileStore, audioManagerVisibilityStore } from "../../Stores/AudioManagerStore";
+import { Translator } from "../../Translator/Translator";
 
 import EVENT_TYPE = Phaser.Scenes.Events;
 import Texture = Phaser.Textures.Texture;
@@ -203,6 +204,7 @@ export class GameScene extends DirtyScene {
     private objectsByType = new Map<string, ITiledMapObject[]>();
     private embeddedWebsiteManager!: EmbeddedWebsiteManager;
     private loader: Loader;
+    private translator: Translator;
 
     constructor(private room: Room, MapUrlFile: string, customKey?: string | undefined) {
         super({
@@ -222,6 +224,7 @@ export class GameScene extends DirtyScene {
             this.connectionAnswerPromiseResolve = resolve;
         });
         this.loader = new Loader(this);
+        this.translator = Translator.getInstance();
     }
 
     //hook preload scene
@@ -1204,6 +1207,7 @@ ${escapedMessage}
                 startLayerName: this.startPositionCalculator.startLayerName,
                 uuid: localUserStore.getLocalUser()?.uuid,
                 nickname: this.playerName,
+                language: Translator.getStringByLanguage(this.translator.getCurrentLanguage()),
                 roomId: this.roomUrl,
                 tags: this.connection ? this.connection.getAllTags() : [],
                 variables: this.sharedVariablesManager.variables,
