@@ -98,6 +98,11 @@
       z-index: 205 !important;
     }
 
+    .highlighted {
+      pointer-events: all !important;
+      padding: 4px;
+    }
+
     .thumbnail {
       transform: scale(0.5, 0.5);
     }

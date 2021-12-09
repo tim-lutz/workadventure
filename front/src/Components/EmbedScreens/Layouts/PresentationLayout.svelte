@@ -3,6 +3,17 @@
     import CamerasContainer from "../CamerasContainer.svelte";
     import CoWebsitesContainer from "../CoWebsitesContainer.svelte";
     import MediaBox from "../../Video/MediaBox.svelte";
+    import { coWebsiteManager } from "../../../WebRtc/CoWebsiteManager";
+
+    function closeCoWebsite() {
+        if ($highlightedEmbedScreen?.type === "cowebsite") {
+            coWebsiteManager.closeCoWebsite($highlightedEmbedScreen.embed);
+        }
+    }
+
+    function minimiseCoWebsite() {
+        highlightedEmbedScreen.removeHighlight();
+    }
 </script>
 
 <div id="embed-left-block">
@@ -14,10 +25,17 @@
                 {/key}
             {:else if $highlightedEmbedScreen.type === "cowebsite"}
                 {#key $highlightedEmbedScreen.embed.iframe.id}
-                    <div id="highlighted-cowebsite">
+                    <div
+                        id={"cowebsite-slot-" + $highlightedEmbedScreen.embed.iframe.id}
+                        class="highlighted-cowebsite nes-container is-rounded"
+                    >
                         <div class="actions">
-                            <button type="button" class="nes-btn is-primary expand">></button>
-                            <button type="button" class="nes-btn is-error close">&times;</button>
+                            <button type="button" class="nes-btn is-primary expand" on:click={minimiseCoWebsite}
+                                >></button
+                            >
+                            <button type="button" class="nes-btn is-error close" on:click={closeCoWebsite}
+                                >&times;</button
+                            >
                         </div>
                     </div>
                 {/key}
@@ -25,7 +43,7 @@
         {/if}
     </div>
 
-    <CoWebsitesContainer highlightedEmbedScreen={$highlightedEmbedScreen} />
+    <CoWebsitesContainer />
 </div>
 
 <CamerasContainer highlightedEmbedScreen={$highlightedEmbedScreen} />
@@ -43,12 +61,11 @@
         //border: 1px red solid;
         height: 70%;
         margin-bottom: 5%;
-        max-height: 85%;
+        //max-height: 85%;
 
-        & > div {
-            margin-top: 2% !important;
-            margin-bottom: 2% !important;
-            padding-bottom: 56.25;
+        .highlighted-cowebsite {
+            height: 100%;
+            background-color: rgba(#000000, 0.6);
         }
     }
 </style>

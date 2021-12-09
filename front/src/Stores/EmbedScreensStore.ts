@@ -35,6 +35,6 @@ export const highlightedEmbedScreen = createHighlightedEmbedScreenStore();
 export const embedScreenLayout = writable<LayoutMode>(LayoutMode.Presentation);
 
 export const hasEmbedScreen = derived(
-    [streamableCollectionStore, coWebsites],
+    [streamableCollectionStore],
     ($values) => get(streamableCollectionStore).size + get(coWebsites).length > 0
 );

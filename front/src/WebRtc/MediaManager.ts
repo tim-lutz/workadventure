@@ -9,7 +9,7 @@ export type StopScreenSharingCallback = (media: MediaStream) => void;
 
 import { cowebsiteCloseButtonId } from "./CoWebsiteManager";
 import { gameOverlayVisibilityStore } from "../Stores/GameOverlayStoreVisibility";
-import { layoutManagerActionStore, layoutManagerVisibilityStore } from "../Stores/LayoutManagerStore";
+import { layoutManagerActionStore } from "../Stores/LayoutManagerStore";
 import { get } from "svelte/store";
 import { localUserStore } from "../Connexion/LocalUserStore";
 import { MediaStreamConstraintsError } from "../Stores/Errors/MediaStreamConstraintsError";

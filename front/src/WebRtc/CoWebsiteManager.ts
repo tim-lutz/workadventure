@@ -2,7 +2,6 @@ import { HtmlUtils } from "./HtmlUtils";
 import { Subject, TimeInterval } from "rxjs";
 import { iframeListener } from "../Api/IframeListener";
 import { waScaleManager } from "../Phaser/Services/WaScaleManager";
-import { ICON_URL } from "../Enum/EnvironmentVariable";
 import { coWebsites } from "../Stores/CoWebsiteStore";
 import { get } from "svelte/store";
 import { highlightedEmbedScreen } from "../Stores/EmbedScreensStore";
@@ -341,10 +340,18 @@ class CoWebsiteManager {
             return undefined;
         }
 
-        const slot = HtmlUtils.getElementById<HTMLDivElement>(cowebsiteSlotBaseDomId + index);
+        let id = cowebsiteSlotBaseDomId;
+
+        if (index === 0) {
+            id += "0";
+        } else {
+            id += coWebsite.iframe.id;
+        }
+
+        const slot = HtmlUtils.getElementById<HTMLDivElement>(id);
 
         if (!slot) {
-            console.error(`Undefined "${cowebsiteSlotBaseDomId + index}" cowebsite slot`);
+            console.error(`Undefined "${id}" cowebsite slot`);
         }
 
         return slot;
@@ -379,13 +386,15 @@ class CoWebsiteManager {
         const index = this.getPositionByCoWebsite(coWebsite);
 
         if (index === 0) {
+            coWebsite.iframe.classList.remove("highlighted");
             coWebsite.iframe.classList.add("main");
         } else {
             coWebsite.iframe.classList.remove("main");
+            coWebsite.iframe.classList.add("highlighted");
         }
     }
 
-    private resizeAllIframes() {
+    public resizeAllIframes() {
         const mainCoWebsite = this.getCoWebsiteByPosition(0);
         const iframes: CoWebsite[] = mainCoWebsite ? [mainCoWebsite] : [];
         const highlightEmbed = get(highlightedEmbedScreen);
@@ -412,14 +421,6 @@ class CoWebsiteManager {
 
     public searchJitsi(): CoWebsite | undefined {
         return get(coWebsites).find((coWebsite: CoWebsite) => coWebsite.iframe.id.toLowerCase().includes("jitsi"));
-    }
-
-    private generateCoWebsiteIcon(url: URL): HTMLImageElement {
-        const icon = document.createElement("img");
-        icon.src = `${ICON_URL}/icon?url=${url}&size=16..30..256`;
-        icon.alt = url.hostname;
-
-        return icon;
     }
 
     public loadCoWebsite(
