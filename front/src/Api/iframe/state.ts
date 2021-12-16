@@ -86,7 +86,7 @@ const proxyCommand = new Proxy(new WorkadventureStateCommands(), {
     set(target: WorkadventureStateCommands, p: PropertyKey, value: unknown, receiver: unknown): boolean {
         // Note: when using "set", there is no way to wait, so we ignore the return of the promise.
         // User must use WA.state.saveVariable to have error message.
-        target.saveVariable(p.toString(), value);
+        target.saveVariable(p.toString(), value).catch(e => console.error(e));
         return true;
     },
     has(target: WorkadventureStateCommands, p: PropertyKey): boolean {
