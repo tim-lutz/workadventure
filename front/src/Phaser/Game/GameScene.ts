@@ -1142,16 +1142,17 @@ ${escapedMessage}
                 throw new Error("Unknown query source");
             }
 
-            const coWebsite = await coWebsiteManager.loadCoWebsite(
+            const coWebsite = coWebsiteManager.addCoWebsite(
                 openCoWebsite.url,
                 iframeListener.getBaseUrlFromSource(source),
                 openCoWebsite.allowApi,
                 openCoWebsite.allowPolicy,
-                openCoWebsite.position
+                openCoWebsite.position,
+                openCoWebsite.closable ?? true
             );
 
-            if (!coWebsite) {
-                throw new Error("Error on opening co-website");
+            if (openCoWebsite.lazy !== undefined && !openCoWebsite.lazy) {
+                await coWebsiteManager.loadCoWebsite(coWebsite);
             }
 
             return {
@@ -1900,9 +1901,8 @@ ${escapedMessage}
             GameMapProperties.JITSI_INTERFACE_CONFIG
         );
         const jitsiUrl = allProps.get(GameMapProperties.JITSI_URL) as string | undefined;
-        const jitsiWidth = allProps.get(GameMapProperties.JITSI_WIDTH) as number | undefined;
 
-        jitsiFactory.start(roomName, this.playerName, jwt, jitsiConfig, jitsiInterfaceConfig, jitsiUrl, jitsiWidth);
+        jitsiFactory.start(roomName, this.playerName, jwt, jitsiConfig, jitsiInterfaceConfig, jitsiUrl);
         this.connection?.setSilent(true);
         mediaManager.hideGameOverlay();
         analyticsClient.enteredJitsi(roomName, this.room.id);

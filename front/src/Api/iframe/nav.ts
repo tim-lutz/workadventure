@@ -41,7 +41,14 @@ export class WorkadventureNavigationCommands extends IframeApiContribution<Worka
         });
     }
 
-    async openCoWebSite(url: string, allowApi?: boolean, allowPolicy?: string, position?: number): Promise<CoWebsite> {
+    async openCoWebSite(
+        url: string,
+        allowApi?: boolean,
+        allowPolicy?: string,
+        position?: number,
+        closable?: boolean,
+        lazy?: boolean
+    ): Promise<CoWebsite> {
         const result = await queryWorkadventure({
             type: "openCoWebsite",
             data: {
@@ -49,6 +56,8 @@ export class WorkadventureNavigationCommands extends IframeApiContribution<Worka
                 allowApi,
                 allowPolicy,
                 position,
+                closable,
+                lazy,
             },
         });
         return new CoWebsite(result.id);
