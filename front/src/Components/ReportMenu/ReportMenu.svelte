@@ -8,6 +8,7 @@
     import { connectionManager } from "../../Connexion/ConnectionManager";
     import { GameConnexionTypes } from "../../Url/UrlManager";
     import { get } from "svelte/store";
+    import { Translator } from "../../Translator/Translator";
 
     let blockActive = true;
     let reportActive = !blockActive;
@@ -60,7 +61,7 @@
 
 <div class="report-menu-main nes-container is-rounded">
     <section class="report-menu-title">
-        <h2>Moderate {userName}</h2>
+        <h2>{Translator.trans("moderate.title", { userName })}</h2>
         <section class="justify-center">
             <button type="button" class="nes-btn" on:click|preventDefault={close}>X</button>
         </section>
@@ -70,14 +71,14 @@
             <button
                 type="button"
                 class="nes-btn {blockActive ? 'is-disabled' : ''}"
-                on:click|preventDefault={activateBlock}>Block</button
+                on:click|preventDefault={activateBlock}>{Translator.trans("moderate.block")}</button
             >
         </section>
         <section class="justify-center">
             <button
                 type="button"
                 class="nes-btn {reportActive ? 'is-disabled' : ''}"
-                on:click|preventDefault={activateReport}>Report</button
+                on:click|preventDefault={activateReport}>{Translator.trans("moderate.report")}</button
             >
         </section>
     </section>
@@ -87,7 +88,7 @@
         {:else if reportActive}
             <ReportSubMenu {userUUID} />
         {:else}
-            <p>ERROR : There is no action selected.</p>
+            <p>{Translator.trans("moderate.no-select")}</p>
         {/if}
     </section>
 </div>

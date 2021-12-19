@@ -2,20 +2,19 @@
     import { fly } from "svelte/transition";
     import { userIsAdminStore } from "../../Stores/GameStore";
     import { ADMIN_URL } from "../../Enum/EnvironmentVariable";
+    import { Translator } from "../../Translator/Translator";
 
     const upgradeLink = ADMIN_URL + "/pricing";
 </script>
 
 <main class="warningMain" transition:fly={{ y: -200, duration: 500 }}>
-    <h2>Warning!</h2>
+    <h2>{Translator.trans("warning.title")}</h2>
     {#if $userIsAdminStore}
         <p>
-            This world is close to its limit!. You can upgrade its capacity <a href={upgradeLink} target="_blank"
-                >here</a
-            >
+            {Translator.trans("warning.content", {upgradeLink})}
         </p>
     {:else}
-        <p>This world is close to its limit!</p>
+        <p>{Translator.trans("warning.limit")}</p>
     {/if}
 </main>
 

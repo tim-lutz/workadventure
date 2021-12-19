@@ -2,6 +2,7 @@
     import { fly } from "svelte/transition";
     import { banMessageVisibleStore, banMessageContentStore } from "../../Stores/TypeMessageStore/BanMessageStore";
     import { onMount } from "svelte";
+    import { Translator } from "../../Translator/Translator";
 
     const text = $banMessageContentStore;
     const NAME_BUTTON = "Ok";
@@ -31,7 +32,8 @@
 
 <div class="main-ban-message nes-container is-rounded" transition:fly={{ y: -1000, duration: 500 }}>
     <h2 class="title-ban-message">
-        <img src="resources/logos/report.svg" alt="***" /> Important message
+        <img src="resources/logos/report.svg" alt="***" />
+        {Translator.trans("important-message")}
         <img src="resources/logos/report.svg" alt="***" />
     </h2>
     <div class="content-ban-message">
